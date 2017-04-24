@@ -1,9 +1,11 @@
-package com.sn.snmall;
+package com.sn.snmall.app;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+
+import com.sn.snmall.R;
 
 //要想把Toolbar取消掉,可以继承Activity,修改主题即可全屏显示该页面          .....Light.NoActionBar
 public class WelcomeActivity extends Activity {
@@ -17,7 +19,6 @@ public class WelcomeActivity extends Activity {
             @Override
             public void run() {
                 jumpMainActivity();
-
             }
         },3000);
     }
