@@ -1,7 +1,6 @@
 package com.sn.snmall.app;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -47,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         //默认主界面一运行,就选中的第一个按钮
         mRgMain.check(R.id.rb_home);
         //默认加载home的Fragment即可
-        RePlaceFG(fragments.get(0));
+        RePlaceFG(mFragment,fragments.get(0));
     }
 
     //初始化各个模块的Fragment,并装入容器中.
@@ -94,11 +93,11 @@ public class MainActivity extends AppCompatActivity {
         }
         BaseFragment baseFragment = fragments.get(position);
         //替换Fragment
-        RePlaceFG(baseFragment);
+        RePlaceFG(mFragment,baseFragment);
 
     }
 
-    private void RePlaceFG(BaseFragment baseFragment) {
+/*    private void RePlaceFG(BaseFragment baseFragment) {
         //获取fragment的经理,方便对fragment的管理
         FragmentManager supportFragmentManager = getSupportFragmentManager();
         //通过Fragment经理,去开启事务对象
@@ -107,12 +106,61 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.replace(R.id.framLayout,baseFragment);
         //通过事务对象提交
         fragmentTransaction.commit();
-    }
+    }*/
 
     /*对Fragment进行优化,解决切换Fragment,会再次创建Fragment,重走生命周期方法的问题,,在项目中切换Fragment,一直都用的是replace
     * ,但是这样做有一个问题,每次切换fragment,都会重新实例化,重新加载fragment,官方文档解释说:replace()这个方法只是在上一个Fragment
     * 不需要时,采用的简便方法,正确的切换方法是add(),切换时hide,add()另一个fragment,再次切换时,只需hide当前的fragment,show显示另
     * 一个fragment,就能够做到多个Fragment切换时不重新实例化
     * */
+
+    private BaseFragment  mFragment;
+    /**
+     * 替换fragment,进行缓存优化
+     * @param from  刚显示的Fragment,马上就要被隐藏的fragment
+     * @param to    马上要切换的Fragment,一会显示
+     */
+    private void RePlaceFG(BaseFragment from,BaseFragment to) {
+        //刚刚显示的Fragment和马上切换的Fragment是否同一个对象,如果是就不做切换,不是,就进行切换
+        if(from != to){
+            //把切换的新Fragment替换缓存的Fragment
+            mFragment =to ;
+            //开启Fragment的事务对象
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            //才切换
+            //判断内存中有没有添加这个Fragment
+            if(!to.isAdded()){
+                //该Fragment没有被添加
+
+                //对上一个Fragment进行非空判断
+                if(from != null){
+                    //隐藏上一个Fragment
+                    fragmentTransaction.hide(from);
+                }
+                //对切换的Fragment进行非空判断
+                if(to !=null){
+                    //添加到切换的Fragment,并提交
+                    fragmentTransaction.add(R.id.framLayout,to).commit();
+                }
+            }
+            else {
+                //该Fragment已经被添加
+
+                //对上一个Fragment进行非空判断
+                if(from != null){
+                    //隐藏上一个Fragment
+                    fragmentTransaction.hide(from);
+                }
+                //对切换的Fragment进行非空判断
+                if(to !=null) {
+                    //显示隐藏的要切换的Fragment,并提交,show就不用替换XMLFramLayout的ID值
+                    fragmentTransaction.show(to).commit();
+                }
+            }
+
+        }
+
+
+    }
 
 }

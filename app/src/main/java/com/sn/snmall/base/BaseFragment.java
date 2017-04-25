@@ -16,6 +16,7 @@ import android.view.ViewGroup;
  * v4包下的fragment,可以向下兼容(如果有2.3的手机使用程序,依然能正常运行)
  * 但是:现在百分之99的手机系统,都在3.0的安卓系统以上.所以你们出去做开发时,也就没必要是V4包下的fragment.
  * v4包下的Fragment存在bug
+ * Base抽取原则:就是子类共有的东西,抽取到父类,子类都有,但实现效果不同的东西,抽取到父类为抽象方法.
  */
 
 public abstract class BaseFragment extends Fragment {
