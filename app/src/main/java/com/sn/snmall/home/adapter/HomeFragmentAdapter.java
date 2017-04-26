@@ -2,16 +2,23 @@ package com.sn.snmall.home.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.sn.snmall.R;
 import com.sn.snmall.home.bean.ResultBeanData;
 import com.sn.snmall.utils.Constants;
 import com.youth.banner.Banner;
+import com.youth.banner.BannerConfig;
+import com.youth.banner.Transformer;
+import com.youth.banner.listener.OnBannerClickListener;
 import com.youth.banner.listener.OnLoadImageListener;
 
 import java.util.ArrayList;
@@ -46,6 +53,9 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter{
         if(viewType == BANNER){
             //返回创建的BannerViewHolder
             return new BannerViewHolder(mContext,mLayoutInflater.inflate(R.layout.banner_viewpager,null));
+        }else if(viewType == CHANNEL){
+            //C.返回创建的CHANNELViewHolder
+            return new ChannelViewHolder(mContext,mLayoutInflater.inflate(R.layout.channel_item,null));
         }
 
         return null;
@@ -59,6 +69,10 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter{
             BannerViewHolder bannerViewHolder = (BannerViewHolder) holder;
             //给BannerViewHolder设置数据
             bannerViewHolder.setData(mResultBean.getBanner_info());
+        }else if(getItemViewType(position) == CHANNEL){
+            ChannelViewHolder channelViewHolder = (ChannelViewHolder) holder;
+            //C.给频道的ViewHoler设置数据
+            channelViewHolder.setData(mResultBean.getChannel_info());
         }
 
     }
@@ -112,7 +126,7 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter{
      */
     @Override
     public int getItemCount() {
-        return 1;
+        return 2;
     }
 
     /**
@@ -130,23 +144,67 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter{
 
         //从外界拿到所需的数据,设置给Banner控件
         public void setData(List<ResultBeanData.ResultBean.BannerInfoBean> banner_info) {
-            //给Banner控件设置加载图片的数据,如果仅仅上午加载网址,就要设置监听,在其内部使用图片开源框架加载图片Glide
+            //给Banner控件设置加载图片的数据,如果是加载网址,就要设置监听,在其内部使用图片开源框架加载图片Glide
             ArrayList<String> imagersUrl = new ArrayList<>();
             //从BannerInfoBean容器中拿到图片的网址,在放到集合里
             for(int x=0; x<banner_info.size(); x++){
                 String imagerUrl = banner_info.get(x).getImage();
-//                Log.d("YDS",imagerUrl);
+                Log.d("YDS",imagerUrl);
                 imagersUrl.add(imagerUrl);
             }
-            //
+
+            //设置广告条循环时所用的小点
+            mBanner.setBannerStyle(BannerConfig.CIRCLE_INDICATOR);
+            //设置图片   参数:1String类型的集合   2.加载图片后的回调监听
             mBanner.setImages(imagersUrl, new OnLoadImageListener() {
                 @Override
                 public void OnLoadImage(ImageView view, Object url) {
+                    //联网请求图片,使用的是Glide根据网址获取图片,是ImageView与Glide转换的数据进行绑定
                     Glide.with(mContext)
                             .load(Constants.BASE_URL_IMAGE+url)
                             .into(view);
                 }
             });
+            //设置广告条轮播时,手风琴样式的切换
+            mBanner.setBannerAnimation(Transformer.Accordion);
+            //设置item的点击事件
+            mBanner.setOnBannerClickListener(new OnBannerClickListener() {
+                @Override
+                public void OnBannerClick(int position) {
+                    Toast.makeText(mContext, "Position 是" +position , Toast.LENGTH_SHORT).show();
+                }
+            });
         }
+    }
+
+    /**
+     * C.从外界拿到数据,设置给频道
+     */
+    private class ChannelViewHolder extends RecyclerView.ViewHolder {
+        private final GridView gc_Channel;
+        private Context mContext;
+        private ChannelAdapter mChannelAdapter;
+
+
+        public ChannelViewHolder(Context context, View inflate) {
+            super(inflate);
+            mContext =context;
+            gc_Channel = (GridView) inflate.findViewById(R.id.gv_channel);
+        }
+
+        public void setData(List<ResultBeanData.ResultBean.ChannelInfoBean> channel_info) {
+            //得到数据,创建适配器对象
+            mChannelAdapter = new ChannelAdapter(mContext, channel_info);
+            //设置GridVIew的点击事件
+            gc_Channel.setAdapter(mChannelAdapter);
+            //设置GridView的点击事件
+            gc_Channel.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                    Toast.makeText(mContext, "positon " +position, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
     }
 }
