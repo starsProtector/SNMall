@@ -18,7 +18,6 @@ import android.view.ViewGroup;
  * v4包下的Fragment存在bug
  * Base抽取原则:就是子类共有的东西,抽取到父类,子类都有,但实现效果不同的东西,抽取到父类为抽象方法.
  */
-
 public abstract class BaseFragment extends Fragment {
 
     //上下文

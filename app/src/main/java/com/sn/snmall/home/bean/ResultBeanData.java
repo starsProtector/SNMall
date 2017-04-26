@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * date:2017/4/25
  * author:易宸锋(dell)
- * function:
+ * function:对主页面数据进行整理的容器
  */
 
 public class ResultBeanData {

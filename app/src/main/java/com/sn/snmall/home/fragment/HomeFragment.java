@@ -13,7 +13,7 @@ import android.widget.Toast;
 import com.alibaba.fastjson.JSON;
 import com.sn.snmall.R;
 import com.sn.snmall.base.BaseFragment;
-import com.sn.snmall.home.adapter.HomeFragmentAdpter;
+import com.sn.snmall.home.adapter.HomeFragmentAdapter;
 import com.sn.snmall.home.bean.ResultBeanData;
 import com.sn.snmall.utils.Constants;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -31,6 +31,7 @@ import okhttp3.Call;
  * 4.使用okhttp工具类,完成网络请求数据
  * 5.配置一个常量类Constants,复制存放URL网址
  * 6.使用fastjson解析数据,把数据装入ResultBeanData这个Bean类中
+ * 7.使用RecyclerView控件,设置适配器与管理对象
  */
 
 public class HomeFragment extends BaseFragment {
@@ -40,7 +41,7 @@ public class HomeFragment extends BaseFragment {
     private TextView tv_search_home;
     private TextView tv_message_home;
     private ResultBeanData.ResultBean mResultBean;
-    private HomeFragmentAdpter mHomeFragmentAdpter;
+    private HomeFragmentAdapter mHomeFragmentAdapter;
 
     @Override
     public View initView(LayoutInflater iflater, ViewGroup container, Bundle savedInstanceState) {
@@ -80,7 +81,6 @@ public class HomeFragment extends BaseFragment {
             }
         });
     }
-
 
     @Override
     public void initData() {
@@ -129,9 +129,9 @@ public class HomeFragment extends BaseFragment {
         //B.对mResultBean判断对象是否为空
         if(mResultBean != null ){
             //有数据,创建RecyclerView的适配器,    参数:1.上下文   2.数据
-            mHomeFragmentAdpter = new HomeFragmentAdpter(mContext, mResultBean);
+            mHomeFragmentAdapter = new HomeFragmentAdapter(mContext, mResultBean);
             //RecycleView设置适配器
-            rvHome.setAdapter(mHomeFragmentAdpter);
+            rvHome.setAdapter(mHomeFragmentAdapter);
             //提示:使用Re测一测设置布局管理者,决定RecyclerView的整体面貌.    参数:1.上下文   2.决定面貌为一行
             rvHome.setLayoutManager(new GridLayoutManager(mContext,1));
 

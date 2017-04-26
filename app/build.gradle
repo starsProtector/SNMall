@@ -35,4 +35,5 @@ dependencies {
     /*okhttpUtil的依赖*/
     compile files('libs/okhttputils-2_6_2.jar')
     compile 'com.squareup.okhttp3:okhttp:3.5.0'
+    compile project(':banner')
 }
