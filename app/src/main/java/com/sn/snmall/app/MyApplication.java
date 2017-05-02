@@ -1,6 +1,7 @@
 package com.sn.snmall.app;
 
 import android.app.Application;
+import android.content.Context;
 
 import com.zhy.http.okhttp.OkHttpUtils;
 
@@ -16,11 +17,21 @@ import okhttp3.OkHttpClient;
  */
 
 public class MyApplication extends Application {
+    //B.创建一个上下文对象,方便其他类调用
+    private static Context mContext;
+
     @Override
     public void onCreate() {
         super.onCreate();
         //初始化OKhttp工具类
         initOk();
+        //B.应用一启动,就创建一个上下文对象
+        mContext =this;
+    }
+
+    //B.获取上下文方法
+    public static Context getmContext(){
+        return mContext;
     }
 
     private void initOk() {

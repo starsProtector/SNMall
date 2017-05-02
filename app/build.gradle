@@ -38,4 +38,5 @@ dependencies {
     compile project(':banner')
     /*ViewPager的依赖库*/
     compile 'com.zhy:magic-viewpager:1.0.1'
+    compile 'com.google.code.gson:gson:2.2.4'
 }
