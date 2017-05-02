@@ -98,21 +98,22 @@ public class HomeFragment extends BaseFragment {
                 .build()//构建对象
                 //执行请求操作
                 .execute(new StringCallback() {
-            //请求网络失败回调
-            @Override
-            public void onError(Call call, Exception e, int i) {
-                Toast.makeText(mContext, "网络请求失败,么么哒", Toast.LENGTH_SHORT).show();
-            }
-            //请求网络成功回调,使用fastJson进行Json的解析
-            @Override
-            public void onResponse(String s, int i) {
-                //测试是否请求网络成功,及线程是否允许在此更新UI,也就是判断这里是否是主线程
-                Toast.makeText(mContext, "请求网络成功了,哈哈哈哈!", Toast.LENGTH_SHORT).show();
+                    //请求网络失败回调
+                    @Override
+                    public void onError(Call call, Exception e, int i) {
+                        Toast.makeText(mContext, "网络请求失败,么么哒", Toast.LENGTH_SHORT).show();
+                    }
+
+                    //请求网络成功回调,使用fastJson进行Json的解析
+                    @Override
+                    public void onResponse(String s, int i) {
+                        //测试是否请求网络成功,及线程是否允许在此更新UI,也就是判断这里是否是主线程
+                        Toast.makeText(mContext, "请求网络成功了,哈哈哈哈!", Toast.LENGTH_SHORT).show();
 //                Log.d("YCF",s);
-                //解析Json数据
-                processData(s);
-            }
-        });
+                        //解析Json数据
+                        processData(s);
+                    }
+                });
 
     }
 
@@ -127,22 +128,33 @@ public class HomeFragment extends BaseFragment {
 //        Log.d("DS",name);
 
         //B.对mResultBean判断对象是否为空
-        if(mResultBean != null ){
+        if (mResultBean != null) {
             //有数据,创建RecyclerView的适配器,    参数:1.上下文   2.数据
             mHomeFragmentAdapter = new HomeFragmentAdapter(mContext, mResultBean);
             //RecycleView设置适配器
             rvHome.setAdapter(mHomeFragmentAdapter);
-            //提示:使用Re测一测设置布局管理者,决定RecyclerView的整体面貌.    参数:1.上下文   2.决定面貌为一行
-            rvHome.setLayoutManager(new GridLayoutManager(mContext,1));
+            //提示:使用recycleView设置完适配器,还要设置布局管理者,决定RecycleView的整体面貌   参数:1上下文 2决定面貌为一行
+            GridLayoutManager gridLayoutManager = new GridLayoutManager(mContext, 1);
+            //C.设置跨度大小的监听
+            gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                @Override
+                public int getSpanSize(int position) {
+                    //如果没有向下滑动,隐藏右边可以一下子弹到最上面的按钮
+                    if (position <= 3) {
+                        ib_top.setVisibility(View.GONE);//注意:XML布局中也要让控件隐藏一下
+                    } else {//如果向下滑动的距离超过3个item,就显示按钮
+                        ib_top.setVisibility(View.VISIBLE);
+                    }
+                    return 1;//此处只能返回1.
+                }
+            });
+            rvHome.setLayoutManager(gridLayoutManager);
 
-        }else{
+        } else {
             Toast.makeText(mContext, "没有数据,所以显示为null", Toast.LENGTH_SHORT).show();
         }
 
     }
-
-
-
 
 
 }
